@@ -16,4 +16,6 @@ public interface ITtsService
     void SetVoice(string voiceName);
     IEnumerable<string> GetInstalledVoices();
     void SaveToMp3(string text, string filePath);
+    bool IsPaused { get; }
+    bool IsSpeaking { get; }
 }

@@ -47,9 +47,24 @@ public class TtsService : ITtsService, IDisposable
     public void SaveToWav(string text, string filePath)
     {
         if (string.IsNullOrWhiteSpace(text)) return;
-        _synthesizer.SetOutputToWaveFile(filePath);
-        _synthesizer.Speak(text);
-        _synthesizer.SetOutputToDefaultAudioDevice();
+
+        // Kayıt için yeni bir instance oluştur, mevcut ayarları kopyala
+        using var tempSynth = new SpeechSynthesizer();
+        tempSynth.Rate = _synthesizer.Rate;
+        tempSynth.Volume = _synthesizer.Volume;
+        
+        try 
+        {
+            if (_synthesizer.Voice != null)
+            {
+                tempSynth.SelectVoice(_synthesizer.Voice.Name);
+            }
+        }
+        catch { /* Ses seçimi hatası yoksay */ }
+
+        tempSynth.SetOutputToWaveFile(filePath);
+        tempSynth.Speak(text);
+        tempSynth.SetOutputToNull();
     }
 
     public void SaveToMp3(string text, string filePath)
@@ -98,6 +113,9 @@ public class TtsService : ITtsService, IDisposable
     {
         return _synthesizer.GetInstalledVoices().Select(v => v.VoiceInfo.Name);
     }
+
+    public bool IsPaused => _synthesizer.State == SynthesizerState.Paused;
+    public bool IsSpeaking => _synthesizer.State == SynthesizerState.Speaking;
 
     public void Dispose()
     {

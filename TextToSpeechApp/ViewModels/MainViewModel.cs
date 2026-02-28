@@ -50,6 +50,11 @@ public partial class MainViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(TogglePlayPauseCommand))]
     private bool _isPlaying;
 
+    [ObservableProperty]
+    private int _caretPosition;
+
+    private int _readingOffset = 0;
+
     // Eventler
     public event EventHandler<int>? HighlightRequested;
     public event EventHandler<string>? TextLoaded;
@@ -57,7 +62,7 @@ public partial class MainViewModel : ObservableObject
     public MainViewModel()
     {
         _localTtsService = new TtsService();
-        _localTtsService.SpeakProgress += (s, pos) => HighlightRequested?.Invoke(this, pos);
+        _localTtsService.SpeakProgress += (s, pos) => HighlightRequested?.Invoke(this, pos + _readingOffset);
         
         _fileService = new FileService();
         _loggerService = new LoggerService();
@@ -187,9 +192,23 @@ public partial class MainViewModel : ObservableObject
                 StatusMessage = "Seslendiriliyor...";
                 _loggerService.LogInformation("Seslendirme başlatıldı.");
                 IsPlaying = true;
-                await Task.Run(() => _localTtsService.Speak(SelectedFile.ExtractedText));
+
+                string textToSpeak = SelectedFile.ExtractedText;
+                // Eğer imleç bir yerde ise ve metin sonuna gelmediyse oradan başla
+                if (CaretPosition > 0 && CaretPosition < textToSpeak.Length - 1)
+                {
+                    textToSpeak = textToSpeak.Substring(CaretPosition);
+                    _readingOffset = CaretPosition;
+                }
+                else
+                {
+                    _readingOffset = 0;
+                }
+
+                await Task.Run(() => _localTtsService.Speak(textToSpeak));
                 IsPlaying = false;
                 StatusMessage = "Tamamlandı";
+                _readingOffset = 0; // Sıfırla
             }
             catch (Exception ex)
             {
@@ -206,25 +225,24 @@ public partial class MainViewModel : ObservableObject
     {
         if (IsPlaying)
         {
-            _localTtsService.Pause();
-            IsPlaying = false;
-            StatusMessage = "Duraklatıldı";
+            if (_localTtsService.IsSpeaking)
+            {
+                _localTtsService.Pause();
+                IsPlaying = false; // Aslında Pause durumunda da Playing true kalabilir ama UI için false yapıyoruz
+                StatusMessage = "Duraklatıldı";
+            }
         }
         else
         {
             if (SelectedFile != null && !string.IsNullOrEmpty(SelectedFile.ExtractedText))
             {
-                // Eğer duraklatılmışsa devam et, yoksa baştan başlat mantığı eklenebilir
-                // Şimdilik Resume ve SpeakCurrent'ı ayırıyoruz, ancak basit bir toggle için:
-                // TtsService state kontrolü gerekir. 
-                // Basitlik için: Resume çağır, çalışmazsa SpeakCurrent çağır.
-                try 
+                if (_localTtsService.IsPaused)
                 {
                     _localTtsService.Resume();
                     IsPlaying = true;
                     StatusMessage = "Devam ediliyor...";
                 }
-                catch
+                else
                 {
                     SpeakCurrentCommand.Execute(null);
                 }
@@ -254,6 +272,7 @@ public partial class MainViewModel : ObservableObject
         _localTtsService.Stop();
         IsPlaying = false;
         StatusMessage = "Durduruldu";
+        _readingOffset = 0;
     }
 
     [RelayCommand]

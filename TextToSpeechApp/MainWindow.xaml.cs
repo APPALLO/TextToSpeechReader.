@@ -40,6 +40,19 @@ public partial class MainWindow : Window
                 newVm.TextLoaded += OnTextLoaded;
             }
         };
+
+        if (MainTextBox != null)
+        {
+            MainTextBox.SelectionChanged += OnSelectionChanged;
+        }
+    }
+
+    private void OnSelectionChanged(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel vm && !vm.IsPlaying)
+        {
+            vm.CaretPosition = MainTextBox.SelectionStart;
+        }
     }
 
     private void OnTextLoaded(object? sender, string text)
