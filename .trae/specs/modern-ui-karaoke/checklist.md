@@ -1,6 +1,0 @@
-- [ ] TtsService SpeakProgress olayını fırlatıyor
-- [ ] RichTextBox metni düzgün görüntülüyor
-- [ ] Okuma sırasında kelimeler senkronize bir şekilde vurgulanıyor (Karaoke)
-- [ ] Okuma durduğunda veya bittiğinde vurgulama temizleniyor
-- [ ] Arayüz modern görünüyor (Eski standart WPF görünümü yok)
-- [ ] Butonlar ve kontroller tutarlı stillere sahip

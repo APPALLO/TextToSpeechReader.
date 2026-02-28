@@ -1,7 +1,0 @@
-- [ ] Uygulama Light tema ile açılıyor (dark mod etkisi yok)
-- [ ] XAML parse/resource hatası oluşmuyor (MaterialDesign kaynakları bulunuyor)
-- [ ] SpeakProgress pozisyonu `CharacterPosition` ile alınıyor
-- [ ] Karaoke vurgulama cross-thread hatası vermiyor
-- [ ] Okuma sırasında UI donmadan vurgulama ilerliyor
-- [ ] clean/build/test başarılı
-- [ ] Uygulama çalıştırma temel akışları doğrulandı (oku/duraklat/devam/durdur, kaydet)
