@@ -1,0 +1,59 @@
+2026-02-28 03:43:37.685 +03:00 [INF] Ses değiştirildi: Microsoft Zira Desktop
+2026-02-28 03:43:37.719 +03:00 [INF] Uygulama başlatıldı.
+2026-02-28 03:43:41.039 +03:00 [INF] Ses değiştirildi: Microsoft Tolga
+2026-02-28 03:43:43.098 +03:00 [INF] Dosya okunuyor: C:\Users\sakar\Downloads\Metinden Sese Dönüştürücü Masaüstü Uygulama Tasarımı ve Uygulaması – Yöneticilere Özet.pdf
+2026-02-28 03:43:44.753 +03:00 [INF] Dosya hazır: C:\Users\sakar\Downloads\Metinden Sese Dönüştürücü Masaüstü Uygulama Tasarımı ve Uygulaması – Yöneticilere Özet.pdf (tr-TR)
+2026-02-28 03:43:47.641 +03:00 [INF] Seslendirme başlatıldı.
+2026-02-28 03:45:25.307 +03:00 [INF] Ses değiştirildi: Microsoft Zira Desktop
+2026-02-28 03:45:25.351 +03:00 [INF] Uygulama başlatıldı.
+2026-02-28 03:45:28.837 +03:00 [INF] Dosya okunuyor: C:\Users\sakar\Downloads\Prototip'ten Üretim Ortamına_ C# ile PDF, Word ve TXT Metinlerini Seslendiren Çevrimiçi Uygulama Geliştirme Rehberi.pdf
+2026-02-28 03:45:29.774 +03:00 [INF] Dosya hazır: C:\Users\sakar\Downloads\Prototip'ten Üretim Ortamına_ C# ile PDF, Word ve TXT Metinlerini Seslendiren Çevrimiçi Uygulama Geliştirme Rehberi.pdf (tr-TR)
+2026-02-28 03:45:31.145 +03:00 [INF] Seslendirme başlatıldı.
+2026-02-28 03:45:43.909 +03:00 [INF] Ses değiştirildi: Microsoft Tolga
+2026-02-28 03:45:45.178 +03:00 [INF] Seslendirme başlatıldı.
+2026-02-28 03:46:04.918 +03:00 [INF] Kayıt başladı: C:\Users\sakar\Downloads\Metinden Sese Dönüştürücü Masaüstü Uygulama Tasarımı ve Uygulaması – Yöneticilere Özet.mp3
+2026-02-28 03:46:05.357 +03:00 [ERR] Kayıt hatası
+System.InvalidOperationException: Cannot change synthesizer's output while speaking.
+   at System.Speech.Internal.Synthesis.VoiceSynthesis.SetOutput(Stream stream, SpeechAudioFormatInfo formatInfo, Boolean headerInfo)
+   at System.Speech.Synthesis.SpeechSynthesizer.SetOutputToNull()
+   at System.Speech.Synthesis.SpeechSynthesizer.SetOutputToWaveFile(String path)
+   at TextToSpeechApp.Services.TtsService.SaveToWav(String text, String filePath) in C:\Users\sakar\Desktop\Klasörler\C#Proje\TextToSpeechReader\TextToSpeechApp\Services\TtsService.cs:line 50
+   at TextToSpeechApp.Services.TtsService.SaveToMp3(String text, String filePath) in C:\Users\sakar\Desktop\Klasörler\C#Proje\TextToSpeechReader\TextToSpeechApp\Services\TtsService.cs:line 63
+   at TextToSpeechApp.ViewModels.MainViewModel.<>c__DisplayClass29_0.<<SaveSelected>b__0>d.MoveNext() in C:\Users\sakar\Desktop\Klasörler\C#Proje\TextToSpeechReader\TextToSpeechApp\ViewModels\MainViewModel.cs:line 229
+--- End of stack trace from previous location ---
+   at TextToSpeechApp.ViewModels.MainViewModel.SaveSelected() in C:\Users\sakar\Desktop\Klasörler\C#Proje\TextToSpeechReader\TextToSpeechApp\ViewModels\MainViewModel.cs:line 226
+2026-02-28 03:46:19.334 +03:00 [INF] Kayıt başladı: C:\Users\sakar\Downloads\Metinden Sese Dönüştürücü Masaüstü Uygulama Tasarımı ve Uygulaması – Yöneticilere Özet.mp3
+2026-02-28 03:48:12.365 +03:00 [INF] Ses değiştirildi: Microsoft Zira Desktop
+2026-02-28 03:48:12.403 +03:00 [INF] Uygulama başlatıldı.
+2026-02-28 03:48:15.210 +03:00 [INF] Ses değiştirildi: Microsoft Tolga
+2026-02-28 03:48:17.309 +03:00 [INF] Dosya okunuyor: C:\Users\sakar\Downloads\Prototip'ten Üretim Ortamına_ C# ile PDF, Word ve TXT Metinlerini Seslendiren Çevrimiçi Uygulama Geliştirme Rehberi.pdf
+2026-02-28 03:48:18.435 +03:00 [INF] Dosya hazır: C:\Users\sakar\Downloads\Prototip'ten Üretim Ortamına_ C# ile PDF, Word ve TXT Metinlerini Seslendiren Çevrimiçi Uygulama Geliştirme Rehberi.pdf (tr-TR)
+2026-02-28 03:48:19.408 +03:00 [INF] Seslendirme başlatıldı.
+2026-02-28 03:48:27.145 +03:00 [INF] Dosya okunuyor: C:\Users\sakar\Downloads\Metinden Sese Dönüştürücü Masaüstü Uygulama Tasarımı ve Uygulaması – Yöneticilere Özet.pdf
+2026-02-28 03:48:27.360 +03:00 [INF] Dosya hazır: C:\Users\sakar\Downloads\Metinden Sese Dönüştürücü Masaüstü Uygulama Tasarımı ve Uygulaması – Yöneticilere Özet.pdf (tr-TR)
+2026-02-28 03:48:33.860 +03:00 [INF] Kayıt başladı: C:\Users\sakar\Downloads\Metinden Sese Dönüştürücü Masaüstü Uygulama Tasarımı ve Uygulaması – Yöneticilere Özet.mp3
+2026-02-28 03:48:52.934 +03:00 [INF] Dosya başarıyla kaydedildi.
+2026-02-28 12:40:44.360 +03:00 [INF] Ses değiştirildi: Microsoft Zira Desktop
+2026-02-28 12:40:44.432 +03:00 [INF] Uygulama başlatıldı.
+2026-02-28 12:42:50.632 +03:00 [INF] Ses değiştirildi: Microsoft Zira Desktop
+2026-02-28 12:42:50.672 +03:00 [INF] Uygulama başlatıldı.
+2026-02-28 12:44:16.729 +03:00 [INF] Ses değiştirildi: Microsoft Zira Desktop
+2026-02-28 12:44:16.785 +03:00 [INF] Uygulama başlatıldı.
+2026-02-28 12:44:23.078 +03:00 [INF] Ses değiştirildi: Microsoft Tolga
+2026-02-28 12:44:30.525 +03:00 [INF] Dosya okunuyor: C:\Users\sakar\Downloads\Microsoft Resmi Kaynaklar – Araştırma ve Öneriler.pdf
+2026-02-28 12:44:31.919 +03:00 [INF] Dosya hazır: C:\Users\sakar\Downloads\Microsoft Resmi Kaynaklar – Araştırma ve Öneriler.pdf (tr-TR)
+2026-02-28 12:46:11.251 +03:00 [INF] Ses değiştirildi: Microsoft Zira Desktop
+2026-02-28 12:46:11.301 +03:00 [INF] Uygulama başlatıldı.
+2026-02-28 12:46:19.391 +03:00 [INF] Ses değiştirildi: Microsoft Tolga
+2026-02-28 12:55:16.470 +03:00 [INF] Ses değiştirildi: Microsoft Zira Desktop
+2026-02-28 12:55:16.565 +03:00 [INF] Uygulama başlatıldı.
+2026-02-28 12:55:22.171 +03:00 [INF] Ses değiştirildi: Microsoft Tolga
+2026-02-28 12:55:49.351 +03:00 [INF] Ses değiştirildi: Microsoft Zira Desktop
+2026-02-28 12:55:49.412 +03:00 [INF] Uygulama başlatıldı.
+2026-02-28 12:55:52.779 +03:00 [INF] Ses değiştirildi: Microsoft Tolga
+2026-02-28 12:55:55.751 +03:00 [INF] Dosya okunuyor: C:\Users\sakar\Downloads\Kod Üretimi ve Proje Planlamada Üst Düzey AI Asistanı Promptu Tasarımı.pdf
+2026-02-28 12:55:58.237 +03:00 [INF] Dosya hazır: C:\Users\sakar\Downloads\Kod Üretimi ve Proje Planlamada Üst Düzey AI Asistanı Promptu Tasarımı.pdf (tr-TR)
+2026-02-28 12:56:28.081 +03:00 [INF] Seslendirme başlatıldı.
+2026-02-28 13:14:00.953 +03:00 [INF] Ses değiştirildi: Microsoft Zira Desktop
+2026-02-28 13:14:01.001 +03:00 [INF] Uygulama başlatıldı.
+2026-02-28 13:14:04.714 +03:00 [INF] Ses değiştirildi: Microsoft Tolga
