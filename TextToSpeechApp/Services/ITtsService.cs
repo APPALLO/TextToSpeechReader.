@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TextToSpeechApp.Services;
 
-public interface ITtsService
+public interface ITtsService : IDisposable
 {
     event EventHandler<int> SpeakProgress;
     void Speak(string text);

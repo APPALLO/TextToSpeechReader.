@@ -117,8 +117,12 @@ public class TtsService : ITtsService, IDisposable
     public bool IsPaused => _synthesizer.State == SynthesizerState.Paused;
     public bool IsSpeaking => _synthesizer.State == SynthesizerState.Speaking;
 
+    private bool _disposed;
+
     public void Dispose()
     {
+        if (_disposed) return;
         _synthesizer.Dispose();
+        _disposed = true;
     }
 }

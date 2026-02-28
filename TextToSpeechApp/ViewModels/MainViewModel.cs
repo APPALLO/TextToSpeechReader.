@@ -8,7 +8,7 @@ using TextToSpeechApp.Services;
 
 namespace TextToSpeechApp.ViewModels;
 
-public partial class MainViewModel : ObservableObject
+public partial class MainViewModel : ObservableObject, IDisposable
 {
     private readonly ITtsService _localTtsService;
     private readonly IFileService _fileService;
@@ -223,56 +223,90 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void TogglePlayPause()
     {
-        if (IsPlaying)
+        try
         {
-            if (_localTtsService.IsSpeaking)
+            if (IsPlaying)
             {
-                _localTtsService.Pause();
-                IsPlaying = false; // Aslında Pause durumunda da Playing true kalabilir ama UI için false yapıyoruz
-                StatusMessage = "Duraklatıldı";
+                if (_localTtsService.IsSpeaking)
+                {
+                    _localTtsService.Pause();
+                    IsPlaying = false; 
+                    StatusMessage = "Duraklatıldı";
+                }
+            }
+            else
+            {
+                if (SelectedFile != null && !string.IsNullOrEmpty(SelectedFile.ExtractedText))
+                {
+                    if (_localTtsService.IsPaused)
+                    {
+                        _localTtsService.Resume();
+                        IsPlaying = true;
+                        StatusMessage = "Devam ediliyor...";
+                    }
+                    else
+                    {
+                        SpeakCurrentCommand.Execute(null);
+                    }
+                }
             }
         }
-        else
+        catch (Exception ex)
         {
-            if (SelectedFile != null && !string.IsNullOrEmpty(SelectedFile.ExtractedText))
-            {
-                if (_localTtsService.IsPaused)
-                {
-                    _localTtsService.Resume();
-                    IsPlaying = true;
-                    StatusMessage = "Devam ediliyor...";
-                }
-                else
-                {
-                    SpeakCurrentCommand.Execute(null);
-                }
-            }
+            _loggerService.LogError("Oynat/Duraklat hatası", ex);
+            StatusMessage = "Hata oluştu";
         }
     }
 
     [RelayCommand]
     private void Pause()
     {
-        _localTtsService.Pause();
-        IsPlaying = false;
-        StatusMessage = "Duraklatıldı";
+        try
+        {
+            _localTtsService.Pause();
+            IsPlaying = false;
+            StatusMessage = "Duraklatıldı";
+        }
+        catch (Exception ex)
+        {
+            _loggerService.LogError("Duraklatma hatası", ex);
+        }
     } 
 
     [RelayCommand]
     private void Resume()
     {
-        _localTtsService.Resume();
-        IsPlaying = true;
-        StatusMessage = "Devam ediliyor...";
+        try
+        {
+            _localTtsService.Resume();
+            IsPlaying = true;
+            StatusMessage = "Devam ediliyor...";
+        }
+        catch (Exception ex)
+        {
+            _loggerService.LogError("Devam etme hatası", ex);
+        }
     }
 
     [RelayCommand]
     private void Stop()
     {
-        _localTtsService.Stop();
-        IsPlaying = false;
-        StatusMessage = "Durduruldu";
-        _readingOffset = 0;
+        try
+        {
+            _localTtsService.Stop();
+            IsPlaying = false;
+            StatusMessage = "Durduruldu";
+            _readingOffset = 0;
+        }
+        catch (Exception ex)
+        {
+            _loggerService.LogError("Durdurma hatası", ex);
+        }
+    }
+
+    public void Dispose()
+    {
+        _localTtsService?.Dispose();
     }
 
     [RelayCommand]
