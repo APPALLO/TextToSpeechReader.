@@ -6,7 +6,7 @@ namespace TextToSpeechApp.Services;
 
 public class WordTextExtractor : ITextExtractor
 {
-    public string ExtractText(string filePath)
+    public Task<string> ExtractText(string filePath)
     {
         using var document = WordprocessingDocument.Open(filePath, false);
         var sb = new StringBuilder();
@@ -21,6 +21,6 @@ public class WordTextExtractor : ITextExtractor
                 }
             }
         }
-        return sb.ToString().Trim();
+        return Task.FromResult(sb.ToString().Trim());
     }
 }

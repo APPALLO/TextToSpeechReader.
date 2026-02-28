@@ -20,27 +20,16 @@ public partial class MainWindow : Window
     private int _lastHighlightStart = -1;
     private int _lastHighlightLength = -1;
 
-    public MainWindow()
+    public MainWindow(MainViewModel vm)
     {
         InitializeComponent();
         
-        // ViewModel'den gelen eventleri dinle
-        if (DataContext is MainViewModel vm)
-        {
-            vm.HighlightRequested += OnHighlightRequested;
-            vm.TextLoaded += OnTextLoaded;
-        }
-        
-        // DataContext değişirse (nadiren olur ama iyi bir pratiktir)
-        DataContextChanged += (s, e) =>
-        {
-            if (e.NewValue is MainViewModel newVm)
-            {
-                newVm.HighlightRequested += OnHighlightRequested;
-                newVm.TextLoaded += OnTextLoaded;
-            }
-        };
+        DataContext = vm;
 
+        // ViewModel'den gelen eventleri dinle
+        vm.HighlightRequested += OnHighlightRequested;
+        vm.TextLoaded += OnTextLoaded;
+        
         if (MainTextBox != null)
         {
             MainTextBox.SelectionChanged += OnSelectionChanged;

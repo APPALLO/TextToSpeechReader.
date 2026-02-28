@@ -38,6 +38,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private int _volume = 100; // 0 to 100
     
     [ObservableProperty]
+    private ObservableCollection<string> _highlightColors = new() { "Blue", "Yellow", "Green", "Cyan", "Magenta", "Orange", "Red" };
+
+    [ObservableProperty]
+    private string _selectedHighlightColor = "Blue";
+
+    [ObservableProperty]
     private bool _isProcessing;
 
     [ObservableProperty]
@@ -59,15 +65,25 @@ public partial class MainViewModel : ObservableObject, IDisposable
     public event EventHandler<int>? HighlightRequested;
     public event EventHandler<string>? TextLoaded;
 
-    public MainViewModel()
+    public MainViewModel(
+        ITtsService ttsService,
+        IFileService fileService,
+        ILoggerService loggerService,
+        ILanguageService languageService,
+        ISettingsService settingsService)
     {
-        _localTtsService = new TtsService();
-        _localTtsService.SpeakProgress += (s, pos) => HighlightRequested?.Invoke(this, pos + _readingOffset);
-        
-        _fileService = new FileService();
-        _loggerService = new LoggerService();
-        _languageService = new LanguageService();
-        _settingsService = new SettingsService();
+        _localTtsService = ttsService;
+        _fileService = fileService;
+        _loggerService = loggerService;
+        _languageService = languageService;
+        _settingsService = settingsService;
+
+        _localTtsService.SpeakProgress += (s, pos) => 
+        {
+            var absPos = pos + _readingOffset;
+            CaretPosition = absPos;
+            HighlightRequested?.Invoke(this, absPos);
+        };
         
         Files = new ObservableCollection<FileItem>();
         Logs = new ObservableCollection<string>();
@@ -125,7 +141,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private async Task AddFiles()
     {
-        var filter = "Supported Files|*.pdf;*.docx;*.txt|PDF Files|*.pdf|Word Documents|*.docx|Text Files|*.txt";
+        var filter = "Supported Files|*.pdf;*.docx;*.txt;*.jpg;*.jpeg;*.png;*.bmp|PDF Files|*.pdf|Word Documents|*.docx|Text Files|*.txt|Image Files|*.jpg;*.jpeg;*.png;*.bmp";
         var path = _fileService.OpenFile(filter);
         if (!string.IsNullOrEmpty(path))
         {
@@ -142,16 +158,17 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             _loggerService.LogInformation($"Dosya okunuyor: {path}");
             
-            string extractedText = await Task.Run(() => 
+            string extractedText = await Task.Run(async () => 
             {
                 ITextExtractor extractor = Path.GetExtension(path).ToLower() switch
                 {
                     ".pdf" => new PdfTextExtractor(),
                     ".docx" => new WordTextExtractor(),
                     ".txt" => new TxtExtractor(),
+                    ".jpg" or ".jpeg" or ".png" or ".bmp" => new ImageTextExtractor(),
                     _ => throw new NotSupportedException("Desteklenmeyen dosya türü")
                 };
-                return extractor.ExtractText(path);
+                return await extractor.ExtractText(path);
             });
 
             fileItem.ExtractedText = extractedText;
@@ -304,6 +321,136 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
+    [RelayCommand]
+    private void MoveToNextSentence()
+    {
+        if (SelectedFile == null || string.IsNullOrEmpty(SelectedFile.ExtractedText)) return;
+        
+        string text = SelectedFile.ExtractedText;
+        int currentPos = Math.Clamp(CaretPosition, 0, text.Length - 1);
+        
+        int i = currentPos;
+        while (i < text.Length)
+        {
+            char c = text[i];
+            if ((c == '.' || c == '!' || c == '?') && (i + 1 >= text.Length || char.IsWhiteSpace(text[i + 1])))
+            {
+                i++;
+                while (i < text.Length && char.IsWhiteSpace(text[i])) i++;
+                
+                if (i < text.Length)
+                {
+                    MoveToPositionAndRestart(i);
+                    return;
+                }
+            }
+            i++;
+        }
+    }
+
+    [RelayCommand]
+    private void MoveToPreviousSentence()
+    {
+        if (SelectedFile == null || string.IsNullOrEmpty(SelectedFile.ExtractedText)) return;
+        
+        string text = SelectedFile.ExtractedText;
+        int currentPos = Math.Clamp(CaretPosition, 0, text.Length - 1);
+        
+        // Önce mevcut cümlenin başını bul
+        int currentSentenceStart = FindSentenceStartBefore(text, currentPos);
+        
+        // Eğer zaten başındaysak veya çok yakınsak, bir önceki cümleye git
+        if (currentPos - currentSentenceStart < 5 && currentSentenceStart > 0)
+        {
+            int prevSentenceStart = FindSentenceStartBefore(text, currentSentenceStart - 1);
+            MoveToPositionAndRestart(prevSentenceStart);
+        }
+        else
+        {
+            MoveToPositionAndRestart(currentSentenceStart);
+        }
+    }
+
+    private int FindSentenceStartBefore(string text, int position)
+    {
+        if (position <= 0) return 0;
+        int i = position - 1;
+        while (i > 0)
+        {
+             char c = text[i];
+             if ((c == '.' || c == '!' || c == '?') && (i + 1 < text.Length && char.IsWhiteSpace(text[i+1])))
+             {
+                 int nextChar = i + 1;
+                 while (nextChar < text.Length && char.IsWhiteSpace(text[nextChar])) nextChar++;
+                 return nextChar;
+             }
+             i--;
+        }
+        return 0;
+    }
+
+    [RelayCommand]
+    private void MoveToNextParagraph()
+    {
+        if (SelectedFile == null || string.IsNullOrEmpty(SelectedFile.ExtractedText)) return;
+        string text = SelectedFile.ExtractedText;
+        int currentPos = Math.Clamp(CaretPosition, 0, text.Length - 1);
+        
+        int i = text.IndexOf('\n', currentPos);
+        if (i != -1)
+        {
+            i++;
+            while (i < text.Length && char.IsWhiteSpace(text[i])) i++;
+            if (i < text.Length) MoveToPositionAndRestart(i);
+        }
+    }
+
+    [RelayCommand]
+    private void MoveToPreviousParagraph()
+    {
+        if (SelectedFile == null || string.IsNullOrEmpty(SelectedFile.ExtractedText)) return;
+        string text = SelectedFile.ExtractedText;
+        int currentPos = Math.Clamp(CaretPosition, 0, text.Length - 1);
+        
+        // Önceki satır başını bulmak için geriye doğru tara
+        // LastIndexOf kullanarak
+        if (currentPos > 0)
+        {
+            int i = text.LastIndexOf('\n', currentPos - 1);
+            // Eğer şu anki satırın başındaysak, bir önceki satırı bul
+            if (i != -1 && currentPos - i < 5) // Tolerans
+            {
+                i = text.LastIndexOf('\n', i - 1);
+            }
+            
+            if (i != -1)
+            {
+                i++;
+                while (i < text.Length && char.IsWhiteSpace(text[i])) i++;
+                if (i < text.Length) MoveToPositionAndRestart(i);
+            }
+            else
+            {
+                MoveToPositionAndRestart(0);
+            }
+        }
+    }
+
+    private void MoveToPositionAndRestart(int position)
+    {
+        CaretPosition = position;
+        _readingOffset = position;
+        
+        // UI Highlight güncelle
+        HighlightRequested?.Invoke(this, position);
+
+        if (IsPlaying)
+        {
+            _localTtsService.Stop();
+            SpeakCurrentCommand.Execute(null);
+        }
+    }
+
     public void Dispose()
     {
         _localTtsService?.Dispose();
@@ -326,7 +473,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             {
                 _loggerService.LogInformation($"Kayıt başladı: {path}");
                 
-                await Task.Run(async () => 
+                await Task.Run(() => 
                 {
                     if (SaveAsMp3)
                         _localTtsService.SaveToMp3(SelectedFile.ExtractedText, path);

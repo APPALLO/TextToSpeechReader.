@@ -16,9 +16,6 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         Title="Metinden Sese Dönüştürücü" Height="850" Width="1100">
     
-    <Window.DataContext>
-        <vm:MainViewModel/>
-    </Window.DataContext>
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Window.Resources>
@@ -42,31 +39,53 @@
                 
                 <!-- Ses Ayarları -->
                 <Grid Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                    <materialDesign:PackIcon Kind="AccountVoice" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                    <TextBlock Text="Ses:" VerticalAlignment="Center" FontWeight="Bold" Margin="0,0,10,0"/>
-                    <ComboBox Grid.Column="1" ItemsSource="{Binding Voices}" SelectedItem="{Binding SelectedVoice}" 
-                              materialDesign:HintAssist.Hint="Ses Seçin" Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
+                    <!-- Row 0: Voice & Highlight -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                    <materialDesign:PackIcon Kind="Speedometer" Grid.Column="3" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                    <TextBlock Grid.Column="3" Text="Hız:" VerticalAlignment="Center" FontWeight="Bold" Margin="25,0,10,0"/>
-                    <Slider Grid.Column="4" Minimum="-10" Maximum="10" Value="{Binding Rate}" TickFrequency="1" IsSnapToTickEnabled="True" 
-                            Style="{StaticResource MaterialDesignDiscreteSlider}"/>
+                        <materialDesign:PackIcon Kind="AccountVoice" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <TextBlock Text="Ses:" VerticalAlignment="Center" FontWeight="Bold" Margin="0,0,10,0"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding Voices}" SelectedItem="{Binding SelectedVoice}" 
+                                  materialDesign:HintAssist.Hint="Ses Seçin" Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
 
-                    <materialDesign:PackIcon Kind="VolumeHigh" Grid.Column="6" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                    <TextBlock Grid.Column="6" Text="Seviye:" VerticalAlignment="Center" FontWeight="Bold" Margin="25,0,10,0"/>
-                    <Slider Grid.Column="7" Minimum="0" Maximum="100" Value="{Binding Volume}" TickFrequency="10" IsSnapToTickEnabled="True" 
-                            Style="{StaticResource MaterialDesignDiscreteSlider}"/>
+                        <materialDesign:PackIcon Kind="FormatColorHighlight" Grid.Column="3" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <TextBlock Grid.Column="3" Text="Vurgu:" VerticalAlignment="Center" FontWeight="Bold" Margin="25,0,10,0"/>
+                        <ComboBox Grid.Column="4" ItemsSource="{Binding HighlightColors}" SelectedItem="{Binding SelectedHighlightColor}" 
+                                  materialDesign:HintAssist.Hint="Renk" Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
+                    </Grid>
+
+                    <!-- Row 2: Rate & Volume -->
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <materialDesign:PackIcon Kind="Speedometer" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <TextBlock Text="Hız:" VerticalAlignment="Center" FontWeight="Bold" Margin="0,0,10,0"/>
+                        <Slider Grid.Column="1" Minimum="-10" Maximum="10" Value="{Binding Rate}" TickFrequency="1" IsSnapToTickEnabled="True" 
+                                Style="{StaticResource MaterialDesignDiscreteSlider}"/>
+
+                        <materialDesign:PackIcon Kind="VolumeHigh" Grid.Column="3" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <TextBlock Grid.Column="3" Text="Seviye:" VerticalAlignment="Center" FontWeight="Bold" Margin="25,0,10,0"/>
+                        <Slider Grid.Column="4" Minimum="0" Maximum="100" Value="{Binding Volume}" TickFrequency="10" IsSnapToTickEnabled="True" 
+                                Style="{StaticResource MaterialDesignDiscreteSlider}"/>
+                    </Grid>
                 </Grid>
 
                 <!-- Cloud Ayarları (Kaldırıldı) -->
@@ -86,7 +105,7 @@
             <materialDesign:Card Grid.Column="0" UniformCornerRadius="6" VerticalAlignment="Stretch">
                 <DockPanel>
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="10">
-                        <Button Style="{StaticResource MaterialDesignRaisedButton}" Command="{Binding AddFilesCommand}" Margin="0,0,10,0" ToolTip="Dosya Ekle">
+                        <Button Style="{StaticResource MaterialDesignRaisedButton}" Command="{Binding AddFilesCommand}" Margin="0,0,10,0" ToolTip="Dosya veya Resim Ekle">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="FilePlus" Margin="0,0,5,0"/>
                                 <TextBlock Text="Ekle"/>
@@ -127,7 +146,36 @@
                     <TextBox x:Name="MainTextBox" Text="{Binding SelectedFile.ExtractedText, UpdateSourceTrigger=PropertyChanged}" 
                              IsReadOnly="True" IsUndoEnabled="False"
                              AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
-                             Padding="5" FontFamily="Segoe UI" FontSize="16" BorderThickness="0"/>
+                             Padding="5" FontFamily="Segoe UI" FontSize="16" BorderThickness="0"
+                             SelectionBrush="{Binding SelectedHighlightColor}" SelectionOpacity="0.5">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedHighlightColor}" Value="Yellow">
+                                        <Setter Property="SelectionTextBrush" Value="Black"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedHighlightColor}" Value="Cyan">
+                                        <Setter Property="SelectionTextBrush" Value="Black"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedHighlightColor}" Value="Orange">
+                                        <Setter Property="SelectionTextBrush" Value="Black"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedHighlightColor}" Value="Green">
+                                        <Setter Property="SelectionTextBrush" Value="Black"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedHighlightColor}" Value="Blue">
+                                        <Setter Property="SelectionTextBrush" Value="White"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedHighlightColor}" Value="Red">
+                                        <Setter Property="SelectionTextBrush" Value="White"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedHighlightColor}" Value="Magenta">
+                                        <Setter Property="SelectionTextBrush" Value="White"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                 </DockPanel>
             </materialDesign:Card>
         </Grid>
@@ -135,11 +183,20 @@
         <!-- Kontroller -->
         <materialDesign:Card Grid.Row="2" Margin="10,0,10,10" Padding="10" UniformCornerRadius="6">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Style="{StaticResource MaterialDesignFloatingActionMiniButton}" Command="{Binding SpeakCurrentCommand}" Margin="0,0,20,0" ToolTip="Oku">
+                
+                <!-- Navigasyon Geri -->
+                <Button Style="{StaticResource MaterialDesignIconButton}" Command="{Binding MoveToPreviousParagraphCommand}" ToolTip="Önceki Paragraf" Margin="0,0,5,0">
+                    <materialDesign:PackIcon Kind="SkipPrevious"/>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignIconButton}" Command="{Binding MoveToPreviousSentenceCommand}" ToolTip="Önceki Cümle" Margin="0,0,20,0">
+                    <materialDesign:PackIcon Kind="Rewind"/>
+                </Button>
+
+                <Button Style="{StaticResource MaterialDesignFloatingActionMiniButton}" Command="{Binding SpeakCurrentCommand}" Margin="0,0,10,0" ToolTip="Oku">
                     <materialDesign:PackIcon Kind="Play"/>
                 </Button>
                 
-                <Button Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}" Command="{Binding PauseCommand}" Margin="0,0,20,0" ToolTip="Duraklat">
+                <Button Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}" Command="{Binding PauseCommand}" Margin="0,0,10,0" ToolTip="Duraklat">
                     <materialDesign:PackIcon Kind="Pause"/>
                 </Button>
                 
@@ -147,6 +204,14 @@
                     <materialDesign:PackIcon Kind="PlayPause"/>
                 </Button>
                 
+                <!-- Navigasyon İleri -->
+                <Button Style="{StaticResource MaterialDesignIconButton}" Command="{Binding MoveToNextSentenceCommand}" ToolTip="Sonraki Cümle" Margin="0,0,5,0">
+                    <materialDesign:PackIcon Kind="FastForward"/>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignIconButton}" Command="{Binding MoveToNextParagraphCommand}" ToolTip="Sonraki Paragraf" Margin="0,0,20,0">
+                    <materialDesign:PackIcon Kind="SkipNext"/>
+                </Button>
+
                 <Button Style="{StaticResource MaterialDesignFloatingActionMiniButton}" Background="#D32F2F" BorderBrush="#D32F2F" Command="{Binding StopCommand}" Margin="0,0,40,0" ToolTip="Durdur">
                     <materialDesign:PackIcon Kind="Stop"/>
                 </Button>

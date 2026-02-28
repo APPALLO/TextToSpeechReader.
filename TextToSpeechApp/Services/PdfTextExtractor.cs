@@ -5,7 +5,7 @@ namespace TextToSpeechApp.Services;
 
 public class PdfTextExtractor : ITextExtractor
 {
-    public string ExtractText(string filePath)
+    public Task<string> ExtractText(string filePath)
     {
         using var document = PdfDocument.Open(filePath);
         var sb = new StringBuilder();
@@ -16,6 +16,6 @@ public class PdfTextExtractor : ITextExtractor
             string pageText = page.Text.Replace("\r\n", " ").Replace("\n", " ").Replace("  ", " ");
             sb.AppendLine(pageText);
         }
-        return sb.ToString().Trim();
+        return Task.FromResult(sb.ToString().Trim());
     }
 }

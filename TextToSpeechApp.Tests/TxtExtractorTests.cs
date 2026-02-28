@@ -5,18 +5,18 @@ namespace TextToSpeechApp.Tests;
 public class TxtExtractorTests
 {
     [Fact]
-    public void ExtractText_ShouldReturnFileContent()
+    public async Task ExtractText_ShouldReturnFileContent()
     {
         // Arrange
         var extractor = new TxtExtractor();
         var tempFile = Path.GetTempFileName();
         var content = "Merhaba Dünya";
-        File.WriteAllText(tempFile, content);
+        await File.WriteAllTextAsync(tempFile, content);
 
         try
         {
             // Act
-            var result = extractor.ExtractText(tempFile);
+            var result = await extractor.ExtractText(tempFile);
 
             // Assert
             Assert.Equal(content, result);

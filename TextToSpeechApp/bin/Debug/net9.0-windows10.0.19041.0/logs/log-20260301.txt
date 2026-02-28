@@ -1,0 +1,7 @@
+2026-03-01 01:25:03.177 +03:00 [INF] Ses değiştirildi: Microsoft Zira Desktop
+2026-03-01 01:25:03.211 +03:00 [INF] Uygulama başlatıldı.
+2026-03-01 01:25:38.451 +03:00 [INF] Ses değiştirildi: Microsoft Tolga
+2026-03-01 01:25:45.652 +03:00 [INF] Dosya okunuyor: C:\Users\sakar\Downloads\Prototip'ten Üretim Ortamına_ C# ile PDF, Word ve TXT Metinlerini Seslendiren Çevrimiçi Uygulama Geliştirme Rehberi.pdf
+2026-03-01 01:25:47.412 +03:00 [INF] Dosya hazır: C:\Users\sakar\Downloads\Prototip'ten Üretim Ortamına_ C# ile PDF, Word ve TXT Metinlerini Seslendiren Çevrimiçi Uygulama Geliştirme Rehberi.pdf (tr-TR)
+2026-03-01 01:25:49.327 +03:00 [INF] Seslendirme başlatıldı.
+2026-03-01 01:26:24.609 +03:00 [INF] Dosya listeden kaldırıldı.

@@ -4,8 +4,8 @@ namespace TextToSpeechApp.Services;
 
 public class TxtExtractor : ITextExtractor
 {
-    public string ExtractText(string filePath)
+    public async Task<string> ExtractText(string filePath)
     {
-        return File.ReadAllText(filePath);
+        return await File.ReadAllTextAsync(filePath);
     }
 }
